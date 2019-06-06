@@ -33,7 +33,7 @@ build_app:
   stage: build
   dependencies: []
   script:
-  - docker run -i --rm --name hello-maven -v ${PWD}:/hello -w /hello maven
+  - docker run -i --rm --name hello-maven --user $(id -u gitlab-runner):$(id -g gitlab-runner) -v ${PWD}:/hello -w /hello maven
       mvn clean install
   - cp target/hello.war hello.war
   - docker run -i --rm --name hello-maven -v ${PWD}:/hello -w /hello maven
@@ -42,16 +42,17 @@ build_app:
     paths:
     - hello.war
     expire_in: 1 week
- 
-deploy:stand:
+
+deploy:stage:
   stage: deploy
   dependencies:
   - build_app
   script:
-  - docker run -d --rm --name hello-tomcat-staging-${CI_COMMIT_SHA:0:8} -P
+  - if [[ $(docker ps -a | grep hello-tomcat-staging) ]]; then docker stop hello-tomcat-staging; fi
+  - docker run -p 84:8080 -d --rm --name hello-tomcat-staging -P 
       -v ${PWD}/hello.war:/usr/local/tomcat/webapps/hello.war  
       tomcat:9.0-jre8-alpine
-  - docker ps -f "name=hello-tomcat-staging-${CI_COMMIT_SHA:0:8}" --format '{{.Ports}}'
+  - docker ps -f "name=hello-tomcat-staging" --format '{{.Ports}}'
  
 deploy:prod:
   stage: deploy
@@ -59,8 +60,9 @@ deploy:prod:
   dependencies:
   - build_app
   script:
-  - docker run -d --rm --name hello-tomcat-production-${CI_COMMIT_SHA:0:8} -P
+  - if [[ $(docker ps -a | grep hello-tomcat-production) ]]; then docker stop hello-tomcat-production; fi
+  - docker run -p 80:8080 -d --rm --name hello-tomcat-production -P
       -v ${PWD}/hello.war:/usr/local/tomcat/webapps/hello.war  
       tomcat:9.0-jre8-alpine
-  - docker ps -f "name=hello-tomcat-production-${CI_COMMIT_SHA:0:8}" --format '{{.Ports}}'
+  - docker ps -f "name=hello-tomcat-production" --format '{{.Ports}}'
 ```
