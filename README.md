@@ -23,6 +23,7 @@ docker run -i --rm --name hello-app -p 8081:8080 \
 And for opening the Servlet run in browser `http://localhost:8081/hello/hello`
 
 ## Gitlab CI Yaml File
+This file can be used in conjunction with Gitlab in order to automate a build, then a deploy to staging along with a deploy to production with a shell executor running Docker.
 ```
 stages:
   - build
