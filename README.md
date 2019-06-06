@@ -21,3 +21,45 @@ docker run -i --rm --name hello-app -p 8081:8080 \
   tomcat:9.0-jre8-alpine
 ```
 And for opening the Servlet run in browser `http://localhost:8081/hello/hello`
+
+## Gitlab CI Yaml File
+```
+stages:
+  - build
+  - deploy
+ 
+build_app:
+  stage: build
+  dependencies: []
+  script:
+  - docker run -i --rm --name hello-maven -v ${PWD}:/hello -w /hello maven
+      mvn clean install
+  - cp target/hello.war hello.war
+  - docker run -i --rm --name hello-maven -v ${PWD}:/hello -w /hello maven
+      mvn clean
+  artifacts:
+    paths:
+    - hello.war
+    expire_in: 1 week
+ 
+deploy:stand:
+  stage: deploy
+  dependencies:
+  - build_app
+  script:
+  - docker run -d --rm --name hello-tomcat-staging-${CI_COMMIT_SHA:0:8} -P
+      -v ${PWD}/hello.war:/usr/local/tomcat/webapps/hello.war  
+      tomcat:9.0-jre8-alpine
+  - docker ps -f "name=hello-tomcat-staging-${CI_COMMIT_SHA:0:8}" --format '{{.Ports}}'
+ 
+deploy:prod:
+  stage: deploy
+  when: manual
+  dependencies:
+  - build_app
+  script:
+  - docker run -d --rm --name hello-tomcat-production-${CI_COMMIT_SHA:0:8} -P
+      -v ${PWD}/hello.war:/usr/local/tomcat/webapps/hello.war  
+      tomcat:9.0-jre8-alpine
+  - docker ps -f "name=hello-tomcat-production-${CI_COMMIT_SHA:0:8}" --format '{{.Ports}}'
+```
