@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class HelloServlet extends HttpServlet {
+    public String hello_str = "Hello Servlet";
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
@@ -15,7 +16,7 @@ public class HelloServlet extends HttpServlet {
         out.println("<TITLE>Hello Servlet</TITLE>");
         out.println("</HEAD>");
         out.println("<BODY>");
-        out.println("Hello Servlet");
+        out.println(hello_str);
         out.println("</BODY>");
         out.println("</HTML>");
     }
