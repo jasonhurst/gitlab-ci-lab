@@ -14,5 +14,6 @@ sudo usermod -a -G docker vagrant
 newgrp docker
 usermod -a -G docker gitlab-runner
 echo "gitlab-runner ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo
+sudo systemctl enable docker
 sudo service docker start
 sudo reboot
