@@ -15,3 +15,4 @@ newgrp docker
 usermod -a -G docker gitlab-runner
 echo "gitlab-runner ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo
 sudo service docker start
+sudo reboot
