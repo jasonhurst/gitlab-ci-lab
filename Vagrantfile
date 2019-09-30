@@ -10,7 +10,7 @@
 servers=[
   {
     :hostname => "gitlab",
-    :ip => "192.168.100.10",
+    :ip => "192.168.100.11",
     :box => "bento/centos-7.3",
     :ram => 2048,
     :cpu => 2,
@@ -19,11 +19,11 @@ servers=[
   },
   {
     :hostname => "gitlab-runner",
-    :ip => "192.168.100.11",
+    :ip => "192.168.100.18",
     :box => "bento/centos-7.3",
     :ram => 1024,
     :cpu => 2,
-    :hport => 8083,
+    :hport => 8089,
     :gport => 8081
   }
 ]
